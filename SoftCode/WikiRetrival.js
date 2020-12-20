@@ -1,20 +1,29 @@
-import React, { Component } from 'react';
+import React from "react";
 import { ActivityIndicator, FlatList, Text, View ,TextInput} from 'react-native';
 
-export default class App extends Component {
-  constructor(props) {
+export default class Component extends React.Component {
+  constructor(props){
     super(props);
-
-    this.state = {
-      text:'',
-      score:'',
-      data: [],
-      isLoading: true
-    };
+    this.state = { users: [],
+              text:'',
+              isLoading:true,
+              prevText:"s"
+            };
+    
+    this.setState({isLoading:true})
   }
-  componentDidUpdate()
-  {
-      fetch("https://apis.sentient.io/microservices/utility/wikipedia/v0.1/getresults",
+  /*componentDidMount() {
+    this.load();
+  }*/
+
+  load() {
+    this.setState({prevText:this.state.text});
+    if(this.state.text==='')
+    {
+      this.setState({users:[],isLoading:true})
+      return;
+    }
+    fetch("https://apis.sentient.io/microservices/utility/wikipedia/v0.1/getresults",
       {
           "method":"POST",
           "headers":{
@@ -27,74 +36,45 @@ export default class App extends Component {
             })
       })
       .then(response => response.json())
-      .then(response => { //console.log(response.results.summary);
-            this.setState({score:response.results.summary});
-            console.log(this.state.score);
+      .then(json => { //console.log(response.results.summary);
+      // console.log(this.state.users); 
+      // console.log("fgr");
+        if(json.message==="successfully processed"){
+            this.setState({users:json.results});
+            console.log(this.state.users);    
+            this.setState({ isLoading: false });
+        }
+        else{   
+        this.setState({ isLoading: true });
+          console.log('problem');
+        }
       })
       .catch(err => { console.log(err); })
       .finally(() => {
-        this.setState({ isLoading: false });
-      });
-
-  }
-
-  /*.then(result => {console.log(result);
- /* this.setState({score:result.results.summary});*/
-/*console.log(this.state.score);})
-
-  }
-
-  /*.then(result => {console.log(result);
- /* this.setState({score:result.results.summary});*/
-/*console.log(this.state.score);})
-  .catch((error) => console.error(error))
-  .finally(() => {
-        this.setState({ isLoading: false });
       });
   }
-  /*componentDidMount() {
-    fetch('https://reactnative.dev/movies.json')
-      .then((response) => response.json())
-      .then((json) => {
-        this.setState({ data: json.movies });
-      })
-      .catch((error) => console.error(error))
-      .finally(() => {
-        this.setState({ isLoading: false });
-      });
+
+  componentDidUpdate(prevProps) {
+    if (this.state.prevText!==this.state.text) {
+      this.load();
+    }
   }
-*/
 
   render() {
-    const { data, isLoading } = this.state;
-
-    return (
+    return(
       <View style={{ flex: 1, padding: 24 }}>
-      <TextInput
+        <TextInput
         style={{height: 40}}
         placeholder="Type here to translate!"
         onChangeText={text1 => this.setState({text:text1})}
         defaultValue={this.state.text}
       />
-        {isLoading ? <ActivityIndicator/> : (
-          <p>{this.state.score}</p>
-          /*<FlatList
-            data={data}
-            keyExtractor={({ id }, index) => id}
-            renderItem={({ item }) => (
-              <Text>{item.title}, {item.releaseYear}</Text>
-            )}
-          />
-        */)}
+      {
+          this.state.isLoading ?<ActivityIndicator/>:(
+            <p>{this.state.users.summary}</p>
+          )
+      }
       </View>
     );
   }
-};
-
-
-
-
-
-
-
-
+}
