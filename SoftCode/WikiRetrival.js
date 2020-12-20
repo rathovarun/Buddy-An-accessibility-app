@@ -1,7 +1,7 @@
 import React from "react";
 import { ActivityIndicator, FlatList, Text, View ,TextInput} from 'react-native';
 
-export default class Component extends React.Component {
+export default class wikiRetrieval extends React.Component {
   constructor(props){
     super(props);
     this.state = { users: [],
