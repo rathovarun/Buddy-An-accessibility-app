@@ -7,56 +7,48 @@ export default class App extends Component {
 
     this.state = {
       text:'',
-      score:'',
-      data: [],
-      dToneScore:'',
-      dToneId:'',
-      dToneName:'',
-      sSenId:'',
-      sSenText:'',
+      prevText:'',
+      docData:[],
+      senData:[],
       isLoading: true
     };
+    this.setState({isLoading:true})
+  }
+
+  load()
+  {
+    this.setState({prevText:this.state.text});
+    if(this.state.text==='')
+    {
+      this.setState({docData:[],senData:[],isLoading:true})
+      return;
+    }
+    var myHeaders = new Headers();
+    myHeaders.append("Authorization", "Basic YXBpa2V5OjBnOXBQeVVGM0JDWDJNc1JJRnh0TUZRUVA1SlhpREZ1bVF1WTVqS2kySS13");
+    var requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body:JSON.stringify({
+        text:this.state.text
+      }),
+      redirect: 'follow'
+    };
+   fetch("https://api.au-syd.tone-analyzer.watson.cloud.ibm.com/instances/fc8966f3-f303-4f9d-8990-5dbc5ab1b852/v3/tone?version=2017-09-21", requestOptions)
+   .then(response => response.json())
+      .then(json => {
+        this.setState({docData:json.document_tone.tones})
+        this.setState({senData:json.sentences_tone})
+        this.setState({isLoading:false})
+        console.log(this.state.docData)
+        console.log(this.state.senData)})
+      .catch(error => console.log('error', error))
   }
   componentDidUpdate()
   {
-    var myHeaders = new Headers();
-  myHeaders.append("Authorization", "Basic RjOVyytyip9VDrmDk2P2NvhAt7rTHn05Bqkbyn2tgyyf");
-  
-  var requestOptions = {
-  method: 'POST',
-  headers: myHeaders,
-  body:JSON.stringify({
-    text:this.state.text
-  }),
-  redirect: 'follow'
-  };
-  
-  fetch("https://api.eu-gb.tone-analyzer.watson.cloud.ibm.com/instances/7b443f00-3a5d-431a-9c89-a1638d09706d", requestOptions)
-  .then(response => response.json())
-  .then(result => {//console.log(result);
-  result.document_tone.tones.map((item,i)=>{
-          this.setState({dToneId:item.tone_id},
-          {dToneScore:item.score},
-          {dToneName:item.tone_name})
-    })
-/*console.log(this.state.score);*/})
-  .catch((error) => console.error(error))
-  .finally(() => {
-        this.setState({ isLoading: false });
-      });
+    if (this.state.prevText!==this.state.text) {
+      this.load();
+    }
   }
-  /*componentDidMount() {
-    fetch('https://reactnative.dev/movies.json')
-      .then((response) => response.json())
-      .then((json) => {
-        this.setState({ data: json.movies });
-      })
-      .catch((error) => console.error(error))
-      .finally(() => {
-        this.setState({ isLoading: false });
-      });
-  }
-*/
   render() {
     const { data, isLoading } = this.state;
 
@@ -69,7 +61,35 @@ export default class App extends Component {
         defaultValue={this.state.text}
       />
         {isLoading ? <ActivityIndicator/> : (
-          <p>{this.state.score}{this.state.dToneId}</p>
+          <div>
+          <p>"Doc_tone"</p>
+          <ul>
+          {this.state.docData.map((item,i)=>{
+            return <li key={i}>{item.score} - {item.tone_name}</li>
+          }
+          )
+          }
+          </ul>
+          <p>"Sen_tone"</p>
+          <ul>
+          {this.state.senData.map((item,i)=>{
+            return <li key={i}>{item.sentence_id} - {item.text}
+            <p>"subTone"</p>
+            <ul>
+            {
+              item.tones.map((subItem,i1)=>{
+                return <li key={i1}>{subItem.score} - {subItem.tone_name}</li>
+              }
+              )
+            }
+            </ul>
+            </li>
+          }
+          )
+          }
+          </ul>
+          
+          </div>
           /*<FlatList
             data={data}
             keyExtractor={({ id }, index) => id}
