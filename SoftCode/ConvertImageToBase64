@@ -94,7 +94,6 @@ export default class wikiRetrieval extends React.Component {
       <View style={{ flex: 1, padding: 24 }}>
         {this.state.ready && this.state.image && this._renderImage()}
         <Button title="gg"  onPress={this._rotate90andFlip}/>
-        <Button title="gg"  onPress={this.load}/>
       </View>
     );
   }
