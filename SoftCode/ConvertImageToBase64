@@ -1,0 +1,101 @@
+import React from "react";
+import { ActivityIndicator, FlatList, Text, View ,TextInput,Image,Button} from 'react-native';
+import { Asset } from 'expo-asset';
+import * as ImageManipulator from 'expo-image-manipulator';
+
+export default class wikiRetrieval extends React.Component {
+  constructor(props){
+    super(props);
+    
+    this.state = { users: [],
+     detectedObjectArr : [],
+              text:'',
+              isLoading:true,
+              prevText:"s",
+              ready:false,
+              image:null,
+              image64:''
+            };
+    this.setState({isLoading:true})
+  }
+  
+  componentDidMount() {
+    (async () => {
+      const image = Asset.fromModule(require('./assets/snack-icon.png'));
+      await image.downloadAsync();
+      this.setState({image:image});
+      this.setState({ready:true});
+    })();
+    
+  }
+  async load() {
+    let re=await fetch("https://apis.sentient.io/microservices/cv/objectdetection/v0.1/getpredictions",{
+      "method":"POST",
+      "headers":{
+        "x-api-key":"04A216B8B1194F4AA983",
+        "content-type": "application/json",
+      } ,
+      "body": JSON.stringify({
+        image_base64:this.state.image64,
+        pageid: 0,
+      })
+    })
+    .then(response => response.json())
+    .then(json => { 
+      this.setState({users:json});    
+      console.log(this.state.users);   	
+      for (let rawObject in this.state.users) {
+		    let object = this.state.users[rawObject][0].split(':')[0];
+        this.setState({detectedObjectArr: this.state.detectedObjectArr.concat(object)})
+	    }  
+      console.log(this.state.detectedObjectArr);
+    }) 
+    return re;
+  }
+  message()
+  {
+    console.log("dfsd")
+  }
+   _rotate90andFlip =async()=>{
+    
+    const image = Asset.fromModule(require('./assets/snack-icon.png'));
+    const manipResult =  await ImageManipulator.manipulateAsync(
+      image.localUri || image.uri,
+      [{ rotate: 90 }, { flip: ImageManipulator.FlipType.Vertical }],
+      { compress: 1, format: ImageManipulator.SaveFormat.PNG ,base64:true}
+    );
+    const re=await this.setState({image64:manipResult.base64});
+    /*console.log(this.state.image64);*/
+    console.log("hj");
+    console.log(this.state.image64);
+    
+    console.log("df");
+  
+  }
+
+  _renderImage(){
+    return (
+      <View
+        style={{
+          marginVertical: 20,
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
+        <Image
+          source={{ uri: this.state.image.localUri || this.state.image.uri }}
+          style={{ width: 300, height: 300, resizeMode: 'contain' }}
+        />
+      </View>
+    );
+  }
+
+  render() {
+    return(
+      <View style={{ flex: 1, padding: 24 }}>
+        {this.state.ready && this.state.image && this._renderImage()}
+        <Button title="gg"  onPress={this._rotate90andFlip}/>
+        <Button title="gg"  onPress={this.load}/>
+      </View>
+    );
+  }
+}
