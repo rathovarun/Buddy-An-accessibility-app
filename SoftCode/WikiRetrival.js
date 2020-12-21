@@ -71,7 +71,7 @@ export default class wikiRetrieval extends React.Component {
       />
       {
           this.state.isLoading ?<ActivityIndicator/>:(
-            <p>{this.state.users.summary}</p>
+            <Text>{this.state.users.summary}</Text>
           )
       }
       </View>
