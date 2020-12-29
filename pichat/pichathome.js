@@ -11,9 +11,9 @@ export default function ImagePickerExample() {
   const [img,setImg] = useState([]);
   const [base64,setbase64]=useState('');
   const [objectName,setObjectName]=useState('');
-  const [tex,setTex] = useState(["person","car","banana"]);
+  const [tex,setTex] = useState([]);
   const [merge,setMerge]=useState(false);
-  
+  const [result1,setResult]=useState("");
   const [clipboard,setClipboard]=useState(false);
    useEffect(() => {
     (async () => {
@@ -38,7 +38,7 @@ export default function ImagePickerExample() {
               height: 10,
               borderRadius:50/2,
               padding:0,marginLeft:5,marginTop:5
-              }}source={require('../add.png')}/> to add Images</Text>
+              }}source={require('./add.png')}/> to add Images</Text>
               </View>
             
     )
@@ -56,11 +56,11 @@ export default function ImagePickerExample() {
               height: 10,
               borderRadius:50/2,
               padding:0,marginLeft:5,marginTop:5
-              }}source={require('../continue.jpg')}/> and  <Image  style={{width: 50,
+              }}source={require('./continue.jpg')}/>&<Image  style={{width: 50,
               height: 20,
               borderRadius:50/2,
               padding:0,marginLeft:5,marginTop:5
-              }}source={require('../continue1.jpg')}/> to add </Text>
+              }}source={require('./continue1.jpg')}/>.Wait for text.</Text>
               </View>
             
     )
@@ -82,6 +82,10 @@ export default function ImagePickerExample() {
  
  const load=(data)=> {
     console.log("load star"+data);
+   // data=data.split(',')[1];
+   // console.log("ff"+data);
+   // setbase64(data);
+   console.log("gdfg"+data)
      fetch("https://apis.sentient.io/microservices/cv/objectdetection/v0.1/getpredictions",{
       "method":"POST",
       "headers":{
@@ -90,11 +94,13 @@ export default function ImagePickerExample() {
       } ,
       "body": JSON.stringify({
         image_base64:data
+        
       })
     })
     .then(response => response.json())
     .then(responsejson => { 
       let s=responsejson["Object 1"][0].split(':')[0];
+      console.log(s);
       setObjectName(s);
       setTex(tex=>{
           const list=tex.concat(s);
@@ -102,7 +108,7 @@ export default function ImagePickerExample() {
         })
       console.log(responsejson["Object 1"][0].split(':')[0]);
     }) 
-
+    
   }
   const message=async()=>{
     console.log("button");
@@ -122,6 +128,8 @@ export default function ImagePickerExample() {
       aspect: [4, 3],
       quality: 1,
     });
+
+
     console.log(result);
     if (!result.cancelled) {
        setImage(result.uri,
@@ -148,7 +156,7 @@ export default function ImagePickerExample() {
     console.log("started button");
     _rotate90andFlip().then(
       data=>{
-        setbase64(data);
+      //  setbase64(data);
         console.log("json gone"+data);
         load(data);
       }
@@ -160,22 +168,25 @@ export default function ImagePickerExample() {
   const mergeSentence=()=>{
     let result="";
     tex.map((item,i)=>{
-      if(item=="person")
+      console.log(item);
+      if(item=="person ")
         {
+          console.log(item);
           if(result=="")
           {
             result=result+"There is "+item;
+            console.log(result);
           }
           else
           {
             result=result+" .There is "+item;
           }
         }
-      else if(item=="car" || item=="aeroplane" || item=="train" || item=="bus")
+      else if(item=="car " || item=="aeroplane " || item=="train " || item=="bus ")
       {
         result=result+" in "+item
       }
-      else if(item=="apple" || item =="banana" || item=="orange" || item=="brocolli")
+      else if(item=="apple " || item =="banana " || item=="orange " || item=="brocolli ")
       {
         result=result+" Eating "+item
       }
@@ -214,10 +225,17 @@ export default function ImagePickerExample() {
       );
     }
   }
+  const sentence=()=>
+  {
+    console.log("sentence")
+    console.log(tex);
+  }
   return (
     merge?mergeRender():(
     <View style={styles.container}>
-      
+      {tex.map((item,i)=>{
+        return(<Text>{item}</Text>);
+      })}
       <ScrollView style={{height:300}}>
         {
           img.map((item,i)=>{
@@ -243,7 +261,7 @@ export default function ImagePickerExample() {
               height: 40,
               borderRadius:50/2,
               padding:0,marginLeft:5,marginTop:5
-              }}source={require('../add.png')}/>
+              }}source={require('./add.png')}/>
             </TouchableHighlight>
       <TouchableHighlight 
         onPress={flip1}>
@@ -251,7 +269,7 @@ export default function ImagePickerExample() {
               height: 40,
               borderRadius:50/2,
               padding:0,marginLeft:5,marginTop:5
-              }}source={require('../continue1.jpg')}/>
+              }}source={require('./continue1.jpg')}/>
             </TouchableHighlight>
       
       <TouchableHighlight 
@@ -260,7 +278,7 @@ export default function ImagePickerExample() {
               height: 40,
               borderRadius:50/2,
               padding:0,marginLeft:5,marginTop:5
-              }}source={require('../continue.jpg')}/>
+              }}source={require('./continue.jpg')}/>
             </TouchableHighlight>
       <TouchableHighlight 
         onPress={mergeText}>
@@ -268,8 +286,9 @@ export default function ImagePickerExample() {
               height: 40,
               borderRadius:50/2,
               padding:0,marginLeft:5,marginTop:5
-              }}source={require('../enter.jpg')}/>
+              }}source={require('./enter.jpg')}/>
             </TouchableHighlight>
+           
       </View>
     </View>)
     
