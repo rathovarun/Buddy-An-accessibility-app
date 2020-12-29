@@ -40,7 +40,7 @@ export default class TextAnalyser extends React.Component {
       }
     )
     .then(response => response.json())
-    .then(json => {// console.log(json.results.loc)
+    .then(json => { console.log(json)
     if(json.results.loc && json.results.loc.length>0){
     json.results.loc.map((item,i)=>{
           this.state.entity.push(item);
