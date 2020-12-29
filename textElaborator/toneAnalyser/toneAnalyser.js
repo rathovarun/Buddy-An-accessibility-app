@@ -7,13 +7,14 @@ export default class ToneAnalyser extends React.Component {
   constructor(props){
     super(props);
     this.users1=[];
-    this.text= this.props.text;
+    this.text= this.props.text
     this.docTone=[];
     this.senTone=[];
     this.state={
       color:[],
       isLoading:false,
-      toneText: "Please Click on Tone Button."
+      toneText: "Please Click on Tone Button.",
+      notone: false
     }
    // this.loadApi();
   }
@@ -29,7 +30,7 @@ export default class ToneAnalyser extends React.Component {
     };
     fetch("https://api.eu-gb.tone-analyzer.watson.cloud.ibm.com/instances/a45ba9a8-74cc-46fe-875b-822e6e99d341/v3/tone?version=2017-09-21", requestOptions)
     .then(response => response.json())
-    .then(result => { // console.log(result);
+    .then(result => {  console.log(result);
       this.docTone=result.document_tone;
       this.senTone=result.sentences_tone;
       this.senTone.map((item,i)=>{
@@ -48,187 +49,264 @@ export default class ToneAnalyser extends React.Component {
     .catch(error => console.log('error', error));
   }
   changeStyleAnger(){
-    
-    this.setState({toneText:"It evokes due to injustice, conflict, humiliation "});
+    this.setState({toneText:"It indicates person's reasoning and analytisis "});
     let tcolor=[];
-    console.log("anger Working");
+    console.log("analytical Working");
+    let no=true;
     this.users1.map((item1,i1)=>{
-      //console.log(item1);
-      item1.tone_id.map((item,i)=>{
-        //console.log(item);
-        if(item.tone_id==="anger")
+      console.log(item1);
+      let check =false;
+      if(item1.tone_id=="notone"){
+        check=false;
+      }
+      else{
+        item1.tone_id.map((item,i)=>{
+          if(item.tone_id==="anger")
+            check=true
+      })
+      }
+      console.log(check);
+      if(check==true)
+      {
         tcolor.push("#E80521");
+        no=false;
+      }
       else
         tcolor.push("black");
-      })
     }
     )
-    /*this.users1.tone_id.map((item,i)=>{
-      console.log(item);
-      if(item.tone_id==="anger")
+    if(no==true)
+    {
+      this.setState({notone:true})
+    }
+    else
+    {
+      this.setState({notone:false})
+    }
+    this.setState({color:tcolor});
+    /*this.setState({toneText:"It evokes due to injustice, conflict, humiliation "});
+    let tcolor=[];
+    console.log("anger Working");
+    console.log(this.users1);
+    this.users1.map((item1,i1)=>{
+      console.log(item1);
+      /*let check =false;
+      if(item1.tone_id=="notone"){
+        check=false;
+      }
+      else{
+        item1.tone_id.map((item,i)=>{
+          if(item.tone_id==="anger")
+            check=true
+      })
+      }
+      console.log(check);
+      if(check==true)
         tcolor.push("#E80521");
       else
         tcolor.push("black");
-    })*/
-    this.setState({color:tcolor});
+    }
+    )
+    this.setState({color:tcolor});*/
   }
   
   changeStyleAnalytical(){
+    let no=true;
     this.setState({toneText:"It indicates person's reasoning and analytisis "});
     let tcolor=[];
     console.log("analytical Working");
     this.users1.map((item1,i1)=>{
-      //console.log(item1);
-      item1.tone_id.map((item,i)=>{
-       // console.log(item);
-        if(item.tone_id==="analytical")
+      console.log(item1);
+      let check =false;
+      if(item1.tone_id=="notone"){
+        check=false;
+      }
+      else{
+        item1.tone_id.map((item,i)=>{
+          if(item.tone_id==="analytical")
+            check=true
+      })
+      }
+      console.log(check);
+      if(check==true)
+      {
+        no=false;
         tcolor.push("#075CD8");
+      }
       else
         tcolor.push("black");
-      })
     }
     )
-    /*this.users1.tone_id.map((item,i)=>{
-      console.log(item);
-      if(item.tone_id==="anger")
-        tcolor.push("#E80521");
+    
+    if(no==true)
+    {
+      this.setState({notone:true})
+    }
+    
+    else
+    {
+      this.setState({notone:false})
+    }
+    this.setState({color:tcolor});
+  }
+changeStyleSadness(){
+    this.setState({toneText:"It indicates person's reasoning and analytisis "});
+    let tcolor=[];
+    let no=true;
+    console.log("sadness Working");
+    this.users1.map((item1,i1)=>{
+      console.log(item1);
+      let check =false;
+      if(item1.tone_id=="notone"){
+        check=false;
+      }
+      else{
+        item1.tone_id.map((item,i)=>{
+          if(item.tone_id==="sadness")
+            check=true
+      })
+      }
+      console.log(check);
+      if(check==true)
+      {
+        no=false;
+        tcolor.push("#566573");
+      }
       else
         tcolor.push("black");
-    })*/
+    }
+    )
+    
+    if(no==true)
+    {
+      this.setState({notone:true})
+    }
+    else
+    {
+      this.setState({notone:false})
+    }
     this.setState({color:tcolor});
   }
 
   changeStyleConfident(){
-    this.setState({toneText:"it is person's degree of certainty"});
+     this.setState({toneText:"It indicates person's reasoning and analytisis "});
     let tcolor=[];
+    let no=true;
     console.log("confident Working");
     this.users1.map((item1,i1)=>{
-     // console.log(item1);
-      item1.tone_id.map((item,i)=>{
-       // console.log(item);
-        if(item.tone_id==="confident")
+      console.log(item1);
+      let check =false;
+      if(item1.tone_id=="notone"){
+        check=false;
+      }
+      else{
+        item1.tone_id.map((item,i)=>{
+          if(item.tone_id==="confident")
+            check=true
+      })
+      }
+      console.log(check);
+      if(check==true)
+      {
+        no=false;
         tcolor.push("#A779D8");
+      }
       else
         tcolor.push("black");
-      })
     }
     )
-    /*this.users1.tone_id.map((item,i)=>{
-      console.log(item);
-      if(item.tone_id==="anger")
-        tcolor.push("#E80521");
-      else
-        tcolor.push("black");
-    })*/
+    
+    if(no==true)
+    {
+      this.setState({notone:true})
+    }
+    else
+    {
+      this.setState({notone:false})
+    }
     this.setState({color:tcolor});
+    
   }
 
   changeStyleFear(){
-    this.setState({toneText:"it is a response to impending danger."})
+    this.setState({toneText:"It indicates person's reasoning and analytisis "});
     let tcolor=[];
+    let no=true;
     console.log("fear Working");
     this.users1.map((item1,i1)=>{
-      //console.log(item1);
-      item1.tone_id.map((item,i)=>{
-        //console.log(item);
-        if(item.tone_id==="fear")
+      console.log(item1);
+      let check =false;
+      if(item1.tone_id=="notone"){
+        check=false;
+      }
+      else{
+        item1.tone_id.map((item,i)=>{
+          if(item.tone_id==="fear")
+            check=true
+      })
+      }
+      console.log(check);
+      if(check==true)
+      {
+        no=false;
         tcolor.push("#325E2B");
+      }
       else
         tcolor.push("black");
-      })
     }
     )
-    /*this.users1.tone_id.map((item,i)=>{
-      console.log(item);
-      if(item.tone_id==="anger")
-        tcolor.push("#E80521");
-      else
-        tcolor.push("black");
-    })*/
+    
+    if(no==true)
+    {
+      this.setState({notone:true})
+    }
+    else
+    {
+      this.setState({notone:false})
+    }
     this.setState({color:tcolor});
+    
   }
 
   changeStyleTentative(){
-    this.setState({toneText:"it is person's degree of inhibition"})
+    let no=true;
+    this.setState({toneText:"It indicates person's reasoning and analytisis "});
     let tcolor=[];
     console.log("tentative Working");
     this.users1.map((item1,i1)=>{
-      //console.log(item1);
-      item1.tone_id.map((item,i)=>{
-        //console.log(item);
-        if(item.tone_id==="tentative")
+      console.log(item1);
+      let check =false;
+      if(item1.tone_id=="notone"){
+        check=false;
+      }
+      else{
+        item1.tone_id.map((item,i)=>{
+          if(item.tone_id==="tentative")
+            check=true
+      })
+      }
+      console.log(check);
+      if(check==true)
+      {
+        no=false;
         tcolor.push("#1AE5CD");
+      }
       else
         tcolor.push("black");
-      })
     }
     )
-    /*this.users1.tone_id.map((item,i)=>{
-      console.log(item);
-      if(item.tone_id==="anger")
-        tcolor.push("#E80521");
-      else
-        tcolor.push("black");
-    })*/
+    
+    if(no==true)
+    {
+      this.setState({notone:true})
+    }
+    else
+    {
+      this.setState({notone:false})
+    }
     this.setState({color:tcolor});
+    
   }
-
-  /*
-  changeStyleAnalytical(){
-    let tcolor=[];
-    this.users1.map((item,i)=>{
-      if(item.tone_id==="analytical")
-        tcolor.push("#075CD8");
-      else
-        tcolor.push("black");
-    })
-    this.setState({color:tcolor});
-  }
-
-  changeStyleConfident(){
-    let tcolor=[];
-    this.users1.map((item,i)=>{
-      if(item.tone_id==="confident")
-        tcolor.push("#A779D8");
-      else
-        tcolor.push("black");
-    })
-    this.setState({color:tcolor});
-  }
-
-  changeStyleFear(){
-    let tcolor=[];
-    this.users1.map((item,i)=>{
-      if(item.tone_id==="fear")
-        tcolor.push("#325E2B");
-      else
-        tcolor.push("black");
-    })
-    this.setState({color:tcolor});
-  }
-
-  changeStyleTentative(){
-    let tcolor=[];
-    this.users1.map((item,i)=>{
-      if(item.tone_id==="tentative")
-        tcolor.push("#1AE5CD");
-      else
-        tcolor.push("black");
-    })
-    this.setState({color:tcolor});
-  }
-
-  changeStyleNotone(){
-    let tcolor=[];
-    this.users1.map((item,i)=>{
-      item.tone_id
-      if(item.tone_id==="notone")
-        tcolor.push("blue");
-      else
-        tcolor.push("black");
-    })
-    this.setState({color:tcolor});
-  }*/
 
   componentDidMount(){
     this.loadApi()
@@ -239,21 +317,23 @@ export default class ToneAnalyser extends React.Component {
       <View >
         {isLoading?<ActivityIndicator/>:(
           <>
-           <ScrollView style={{height:200}}>
+        {this.state.notone?<Text style={styles.paragraph}>"No Tone"</Text >:  ( <ScrollView style={{height:170}}>
               <Text style={styles.paragraph}>{
                 this.users1.map((item,i)=>{
                   return(
                     <Text style={{color:this.state.color[i]}}>{item.text}</Text>)
                 })
               }</Text>
-            </ScrollView>
-      
+            </ScrollView>)}
             <Card>
+            
+          <Text style={styles.paragraph}>"Click on Text to get Highlighted Text"</Text>
               <Button title="Analytical" onPress={this.changeStyleAnalytical.bind(this)} color="#075CD8" />
               <Button title="Anger" onPress={this.changeStyleAnger.bind(this)} color="#E80521"/>
               <Button title="Confident" onPress={this.changeStyleConfident.bind(this)} color="#A779D8" />
               <Button title="Fear" onPress={this.changeStyleFear.bind(this)} color="#325E2B"/>
               <Button title="Tentative" onPress={this.changeStyleTentative.bind(this)} color="#1AE5CD" />
+              <Button title="Sadness" onPress={this.changeStyleSadness.bind(this)} color="#566573" />
             </Card>
           </>
         )} 
